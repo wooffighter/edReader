@@ -1,0 +1,15 @@
+{
+  "name": "@fightingdoggo/edreader",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "tail": "^2.2.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "test.js"
+  },
+  "author": "FightingDoggo",
+  "license": "ISC"
+}
