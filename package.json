@@ -2,7 +2,7 @@
   "name": "@fightingdoggo/edreader",
   "version": "1.0.1",
   "description": "",
-  "main": "index.js",
+  "main": "JournalWatcher.js",
   "dependencies": {
     "tail": "^2.2.1"
   },
