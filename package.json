@@ -8,8 +8,8 @@
   },
   "devDependencies": {},
   "scripts": {
-    "test": "test.js"
+    "test": "node test.js"
   },
   "author": "FightingDoggo",
-  "license": "ISC"
+  "license": "GPL-3.0-or-later"
 }
