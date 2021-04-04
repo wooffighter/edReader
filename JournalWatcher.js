@@ -24,11 +24,10 @@ var tail = new Tail(dir+files[files.length-1][1], options)
 tail.on('line',data=>{
     data = JSON.parse(data)
     EventEmitter.emit("newLine",data)
-})
+});
 
 tail.watch()
 
-module.exports = tail
 module.exports.file = dir+files[files.length-1][1]
 module.exports = EventEmitter
 
