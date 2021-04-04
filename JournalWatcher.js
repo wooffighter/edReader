@@ -16,14 +16,14 @@ dirContent.forEach(name => {
     if (name.match(/Journal..+.log/g)) {
         files.push([name.replace(/Journal.|\.\d{2}\.|log/gm,""),name])
     }
-})
+});
 
 files.sort(function(a,b) {return Number(a[0])>Number(b[0])})
 
 var tail = new Tail(dir+files[files.length-1][1], options)
 tail.on('line',data=>{
-    data = JSON.parse(data)
-    EventEmitter.emit("newLine",data)
+    data = JSON.parse(data);
+    EventEmitter.emit("newLine",data);
 });
 
 tail.watch()
