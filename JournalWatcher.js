@@ -7,9 +7,9 @@ var EventEmitter = new events.EventEmitter();
 
 var options= {separator: /[\r]{0,1}\n/, fromBeginning: true, fsWatchOptions: {}, follow: true, logger: console, useWatchFile: true}
 
-var dir = `C:/Users/${os.userInfo().username}/Saved Games/Frontier Developments/Elite Dangerous/`
+const journalDir = `C:/Users/${os.userInfo().username}/Saved Games/Frontier Developments/Elite Dangerous/`
 
-var dirContent = fs.readdirSync(dir)
+var dirContent = fs.readdirSync(journalDir)
 var files = []
 
 dirContent.forEach(name => {
@@ -20,17 +20,51 @@ dirContent.forEach(name => {
 
 files.sort(function(a,b) {return Number(a[0])>Number(b[0])})
 
-var tail = new Tail(dir+files[files.length-1][1], options)
-tail.on('line',data=>{
+//Read file and check for updates
+function startRead(event, dir) {
+    dir = dir || `C:/Users/${os.userInfo().username}/Saved Games/Frontier Developments/Elite Dangerous/`
+    if(event==="Journal") {
+        JournalTail.watch()
+        return `Started watching ${event}`
+    }
+    fs.readFile(dir+event+".json", (err,data) => {
+        EventEmitter.emit(event, JSON.parse(Buffer.from(data, "utf-8").toString()))
+        EventEmitter.emit("allData", JSON.parse(Buffer.from(data, "utf-8").toString()))
+        return `Started watching ${event}`
+    })   
+    fs.watchFile(dir+event+".json",(curr,prev) => {
+        fs.readFile(dir+event+".json", (err,data) => {
+            EventEmitter.emit(event, JSON.parse(Buffer.from(data, "utf-8").toString()))
+            EventEmitter.emit("allData", JSON.parse(Buffer.from(data, "utf-8").toString()))
+        })
+    });
+}
+
+function stopRead(event, dir) {
+    dir = dir || `C:/Users/${os.userInfo().username}/Saved Games/Frontier Developments/Elite Dangerous/`
+    if(event==="Journal") {
+        JournalTail.unwatch()
+        return `Stopped watching ${event}`
+    } else {
+        fs.unwatchFile(dir+event+".json")
+        return `Stopped watching ${dir+event}.json` 
+    }
+}
+
+
+// Journal events
+var JournalTail = new Tail(journalDir+files[files.length-1][1], options)
+JournalTail.on("error", error => console.error(error));
+JournalTail.on('line',data=>{
     data = JSON.parse(data);
-    EventEmitter.emit("newLine",data);
+    EventEmitter.emit("Journal", data);
+    EventEmitter.emit("allData", data)
+    EventEmitter
 });
+JournalTail.unwatch()
 
-tail.watch()
-
-module.exports.file = dir+files[files.length-1][1]
+module.exports.file = journalDir+files[files.length-1][1]
 module.exports = EventEmitter
 
-tail.on("error", error => {
-    console.log('ERROR: ', error);
-});
+module.exports.startRead = startRead
+module.exports.stopRead = stopRead
