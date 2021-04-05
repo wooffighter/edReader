@@ -51,6 +51,16 @@ function stopRead(event, dir) {
     }
 }
 
+function startAll() {
+    startRead("Cargo")
+    startRead("Market")
+    startRead("ModulesInfo")
+    startRead("NavRoute")
+    startRead("Outfitting")
+    startRead("Shipyard")
+    startRead("Status")
+}
+
 
 // Journal events
 var JournalTail = new Tail(journalDir+files[files.length-1][1], options)
@@ -68,3 +78,4 @@ module.exports = EventEmitter
 
 module.exports.startRead = startRead
 module.exports.stopRead = stopRead
+module.exports.startAll = startAll
